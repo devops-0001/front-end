@@ -20,6 +20,7 @@ pipeline {
             }
         }
         stage('Package') {
+            when { branch 'master' }
             steps {
                 echo 'Packaging....'
                 sh 'npm run package'
