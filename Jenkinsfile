@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:4-alpine'
+    }
+
+  }
   stages {
     stage('Build') {
       steps {
@@ -25,7 +30,6 @@ pipeline {
         archiveArtifacts '**/distribution/*.zip'
       }
     }
-
 
   }
   tools {
