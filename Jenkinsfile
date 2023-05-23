@@ -1,12 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:4-alpine'
-    }
-
-  }
+  agent none
   stages {
     stage('Build') {
+      agent {
+        docker {
+          image 'node:4-alpine'
+        }
+
+      }
       steps {
         echo 'Building..'
         sh 'npm install'
@@ -14,6 +15,12 @@ pipeline {
     }
 
     stage('Test') {
+      agent {
+        docker {
+          image 'node:4-alpine'
+        }
+
+      }
       steps {
         echo 'Testing..'
         sh 'npm test'
@@ -21,13 +28,20 @@ pipeline {
     }
 
     stage('Package') {
+      agent any
       when {
         branch 'master'
       }
       steps {
         echo 'Packaging....'
-        sh 'npm run package'
-        archiveArtifacts '**/distribution/*.zip'
+        script {
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+            def dockerImage = docker.build("initcron/frontend:v${env.BUILD_ID}", "./")
+            dockerImage.push()
+            dockerImage.push("latest")
+          }
+        }
+
       }
     }
 
