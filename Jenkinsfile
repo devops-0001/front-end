@@ -26,11 +26,6 @@ pipeline {
       }
     }
 
-    stage('Demo') {
-      steps {
-        sleep 5
-      }
-    }
 
   }
   tools {
